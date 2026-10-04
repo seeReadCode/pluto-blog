@@ -21,11 +21,11 @@ This should not route any of our precious model interaction to the magnanimous t
 
 ## What are these things
 
-- **homebrew** - *the* package manager for Mac OS [brew.sh]](https://brew.sh/))
+- **homebrew** - *the* package manager for Mac OS ([brew.sh](https://brew.sh/))
 - **Qwen2.5** – Allibaba's LLM model that is "excellent for autocomplete and light agent tasks" ([qwen.com](https://qwen.ai/blog?id=qwen2.5)) ([hf/qwen2.5-coder:1.5b](https://ollama.com/library/qwen2.5-coder:7b)) ([wiki](https://en.wikipedia.org/wiki/Qwen)) ([hf/qwen 2.5 models](https://huggingface.co/collections/Qwen/qwen25))
-- **Ollama** – llama.cpp wrapper + "Docker for models" in Go managing models using [open containers standards](https://github.com/opencontainers) via registries – defaulting to their own – and running LLM models *locally* with [GGUF](https://github.com/ggml-org/ggml/blob/master/docs/gguf.md) and the [llama.cpp](https://github.com/ggml-org/llama.cpp) backend. 
+- **Ollama** – "Docker for LLM models" written in Go. Widely used app for managing models with [open containers standards](https://github.com/opencontainers). Defaults to their registry. Runs LLM models *locally* with [GGUF](https://github.com/ggml-org/ggml/blob/master/docs/gguf.md) and the [llama.cpp](https://github.com/ggml-org/llama.cpp) backend. 
 
-Ollama lacks metrics out of the box is not specialized for Mac Silicon so later I will look at  [oMLX](https://omlx.ai/) and [mlx-lm](https://github.com/ml-explore/mlx-lm) for using Mac Silicon's [MLX](https://opensource.apple.com/projects/mlx/).  I will also look at [LM Studio](https://lmstudio.ai/).
+Ollama lacks metrics out of the box *and* is not specialized for Mac Silicon. So, consider   [oMLX](https://omlx.ai/) and [mlx-lm](https://github.com/ml-explore/mlx-lm) for using Mac Silicon's [MLX](https://opensource.apple.com/projects/mlx/).  For a GUI and image based workflows look at [LM Studio](https://lmstudio.ai/).  For local VSCode integration, consider [Cline](https://cline.bot/).
 
 Anyways – have fun!
 
