@@ -1,0 +1,59 @@
+:root {
+  --bg: #fdfdfc;
+  --fg: #1c1c1c;
+  --dim: #767676;
+  --rule: #dcdcd8;
+  --measure: 34rem;
+}
+@media (prefers-color-scheme: dark) {
+  :root { --bg: #161616; --fg: #d8d8d4; --dim: #8a8a86; --rule: #333; }
+}
+
+* { box-sizing: border-box; }
+html {
+  background: var(--bg);
+  color: var(--fg);
+  font: 1.125rem/1.6 Charter, "Bitstream Charter", "Sitka Text", Cambria, Georgia, serif;
+  font-kerning: normal;
+  font-variant-ligatures: common-ligatures;
+  hyphens: auto;
+  text-rendering: optimizeLegibility;
+  -webkit-text-size-adjust: 100%;
+}
+body { margin: 0; }
+main { max-width: var(--measure); margin: 0 auto; padding: 4rem 1.25rem 6rem; }
+
+h1, h2, h3, h4 { font-weight: 600; line-height: 1.25; margin: 2em 0 .5em; text-wrap: balance; }
+h1 { font-size: 1.5rem; margin-top: 0; }
+h2 { font-size: 1.2rem; }
+h3, h4 { font-size: 1rem; font-style: italic; font-weight: 400; }
+
+p, ul, ol, blockquote, pre, table, figure { margin: 0 0 1.1em; }
+/* Obsidian-style: a <br> from a single newline stays inside the paragraph */
+p { text-wrap: pretty; }
+
+a { color: inherit; text-decoration-thickness: 1px; text-underline-offset: .2em; text-decoration-color: var(--dim); }
+a:hover { text-decoration-color: currentColor; }
+
+blockquote { margin-left: 0; padding-left: 1.1em; border-left: 1px solid var(--rule); color: var(--dim); }
+hr { border: 0; border-top: 1px solid var(--rule); margin: 2.5em 0; }
+img { max-width: 100%; height: auto; display: block; }
+
+code, pre { font: .85em/1.5 ui-monospace, "SF Mono", Menlo, Consolas, monospace; }
+pre { overflow-x: auto; padding: .9em 1em; border: 1px solid var(--rule); }
+:not(pre) > code { background: none; padding: 0; }
+
+table { border-collapse: collapse; width: 100%; font-size: .95em; }
+th, td { text-align: left; padding: .3em .8em .3em 0; border-bottom: 1px solid var(--rule); }
+
+ul, ol { padding-left: 1.2em; }
+li > p { margin: 0; }
+
+.footnotes { font-size: .85em; color: var(--dim); }
+.footnotes-sep { border: 0; margin: 2em 0 1em; }
+
+ul.index { list-style: none; padding: 0; }
+ul.index li { margin: 0 0 .4em; display: flex; justify-content: space-between; gap: 1rem; }
+ul.index time { color: var(--dim); font-variant-numeric: tabular-nums; }
+
+@media print { html { background: #fff; color: #000; font-size: 11pt; } }
