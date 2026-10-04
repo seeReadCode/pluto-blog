@@ -25,8 +25,8 @@ At the moment my understanding is that this will not route any of your precious 
 ## What are these things
 
 - [homebrew](https://brew.sh/) - package manager for Mac OS
-- Qwen2.5 – LLM model that is "excellent for autocomplete and light agent tasks" ([huggingface/qwen2.5-coder:1.5b](https://ollama.com/library/qwen2.5-coder:7b))
-- Ollama – Go based app for managing LLMs models. Lacks metrics, not specialized for Mac Silicon.  `GGUF` and `llama.cpp` backends c.f.  oMLX which native MLX-LM formatting
+- Qwen2.5 – LLM model that is "excellent for autocomplete and light agent tasks" ([huggingface/qwen2.5-coder:1.5b](https://ollama.com/library/qwen2.5-coder:7b)) ([qwen.com on 2.5](https://qwen.ai/blog?id=qwen2.5)) ([wiki](https://en.wikipedia.org/wiki/Qwen)) ([hf/qwen 2.5 models](https://huggingface.co/collections/Qwen/qwen25))
+- Ollama – llama.cpp wrapper + Docker for models in Go managing using OCI standard and running LLM models. [GGUF](https://github.com/ggml-org/ggml/blob/master/docs/gguf.md) and [llama.cpp](https://github.com/ggml-org/llama.cpp) backends. Lacks metrics out of the box and not specialized for Mac Silicon.  c.f.  oMLX which native MLX-LM formatting
 
 Have fun!
 
