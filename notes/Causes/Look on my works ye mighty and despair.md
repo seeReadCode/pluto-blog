@@ -60,11 +60,147 @@ srv  update_slots: all slots are idle
 [GIN] 2026/10/04 - 10:47:53 | 200 |  1.282435416s |       127.0.0.1 | POST     "/api/chat"
 ```
 
-I take that into Claude to explain it to me.
+I send that to Claude to explain it to me.
+
+> ### Server and slot setup
+> 
+> - **srv / slot**: `srv` is the inference server. A **slot** is one independent sequence with its own KV cache (the model's memory of the tokens so far). Parallel requests use separate slots.
+> - **conv_id empty**: no conversation ID was supplied, so nothing is reused.
+> - **selected slot by LRU, t_last = -1**: with several slots, the least recently used is picked. `-1` means this one has never been used.
+> - **prompt cache**: a store of earlier prompts' KV states so repeated prefixes don't need reprocessing. `f_keep` is the fraction of the existing slot's cache that matches the new prompt, and `f_sim` is similarity to cached prompts. Both are empty or zero because it's a cold start. The cache is at 0 prompts, with limits of 8192 MiB and 4096 tokens.
+> 
+> ### Context and prompt
+> 
+> - **n_ctx_slot = 4096**: this slot's context window, covering prompt plus output.
+> - **n_keep = 4**: tokens always preserved at the start if the context fills up and must be shifted (typically BOS and the start of the system prompt).
+> - **task.n_tokens = 37**: the prompt is 37 tokens.
+> - **cached n_tokens = 0, memory_seq_rm [0, end)**: nothing could be reused, so the KV cache for the sequence is cleared and the whole prompt is processed.
+> 
+> 
+> ### Sampler chain and parameters
+> 
+> Each generated token passes through these filters in order: `logits -> penalties -> dry -> top-n-sigma -> top-k -> typical -> top-p -> min-p -> xtc -> temp -> dist`. The `?` marks samplers that are optional and inactive with the current values (neutral settings).
+> 
+
+And here's a nice table for the parameters in play.
+
+|Parameter|Value|Meaning|
+|---|---|---|
+|`temp`|0.8|Randomness. Lower is more deterministic, higher is more varied.|
+|`top_k`|40|Only the 40 most likely tokens are candidates.|
+|`top_p`|0.9|Keep the smallest set of tokens whose probabilities sum to 90%.|
+|`min_p`|0|Disabled. Otherwise drops tokens below a fraction of the top token's probability.|
+|`typical_p`|1.0|Disabled.|
+|`repeat_penalty` / `repeat_last_n`|1.0 / 64|No penalty. If raised, it would apply to the last 64 tokens.|
+|`frequency_penalty`, `presence_penalty`|0|Disabled. They penalize tokens by how often or whether they've already appeared.|
+|`dry_*`|multiplier 0|DRY ("Don't Repeat Yourself") penalizes repeated sequences. Off because the multiplier is 0.|
+|`xtc_*`|probability 0|"Exclude Top Choices" occasionally removes the most likely tokens to boost creativity. Off.|
+|`top_n_sigma`|-1|Disabled.|
+|`mirostat`|0|Disabled. The adaptive perplexity-targeting alternative to top-k/top-p.|
+|`dist`|final step|Randomly draws from the remaining distribution.|
+
+### Timing
+
+- **prompt eval**: 37 tokens in 263 ms (140 tokens/s). This is the "prefill" stage, which is parallel and fast.
+- **eval**: 53 tokens generated in 1008 ms (51.6 tokens/s). This is the decode stage, one token at a time, and it's the speed you feel.
+- **total**: 1272 ms for 90 tokens.
+- **graphs reused = 52**: the compute graph was built once and reused for the other 52 decode steps, which saves overhead.
+- **release, n_tokens = 89, truncated = 0**: the slot holds 89 tokens in its KV cache (the last sampled token isn't stored yet), and nothing was cut off by the context limit. Then all slots go idle.
+
+## How configuration changes would affect output
+
+**Output style and quality** (set per request in `options`, or in a Modelfile with `PARAMETER`):
+
+- **temperature**: lowering to 0–0.3 gives focused, repeatable answers, which suits code, extraction, and factual tasks. Raising to 1.0+ gives more creative but less reliable output.
+- **top_k / top_p / min_p**: tightening them (e.g. top_p 0.7, top_k 20) trims unlikely tokens and makes output safer and blander. Loosening them increases variety and the chance of oddities. `min_p` around 0.05 is a popular alternative that adapts to the model's confidence.
+- **repeat_penalty** (1.05–1.2): reduces looping and repeated phrases, but too high makes the model avoid necessary repeats such as names and code identifiers.
+- **presence/frequency penalties**: nudge toward new topics or vocabulary.
+- **seed** (with low temperature): makes results reproducible.
+- **mirostat 1 or 2**: replaces top-k/top-p with feedback control. It keeps output "interestingness" steady, which helps in long creative text.
+- **num_predict**: caps output length. Too low truncates answers mid-sentence.
+- **stop**: custom stop sequences end generation early.
+
+**Context and memory:**
+
+- **num_ctx** (here 4096): raising it lets you send longer prompts or conversations, but KV cache memory grows linearly with it. Too large can push layers off the GPU and slow everything down. Too small silently drops old conversation content, so the model "forgets" earlier turns (the `truncated` flag would show it).
+- **num_keep**: protects the first N tokens (like a system prompt) from being discarded when the context shifts.
+- **OLLAMA_KV_CACHE_TYPE** (`q8_0`/`q4_0`) with **OLLAMA_FLASH_ATTENTION=1**: shrinks KV cache memory, allowing larger contexts, with a small quality cost.
+
+**Speed and resources:**
+
+- **num_gpu** (layers offloaded): more layers on GPU means faster decode. Your 51 tokens/s suggests it is probably well offloaded already.
+- **num_thread**: only matters for CPU inference. Setting it to your physical core count is usually best.
+- **num_batch**: larger batches speed up prompt processing, with more memory use.
+- **OLLAMA_NUM_PARALLEL**: more slots allow concurrent requests, but the context is divided among them (4 slots at 8192 context gives 2048 each), and per-request speed may drop.
+- **OLLAMA_KEEP_ALIVE**: how long the model stays loaded. Keeping it loaded avoids reload delay on the next request. A shorter value frees VRAM sooner.
+- **Prompt cache hits**: when consecutive requests share a long prefix (like a system prompt), prompt eval time drops sharply. That's most noticeable with long prompts. With your 37-token prompt it hardly matters.
+
+Some of the newer samplers (DRY, XTC, top-n-sigma) may not be exposed as settings in all Ollama versions, so check your version's docs before relying on them. If you share your Modelfile or environment variables, I can suggest specific values for your use case.
 
 
+```dockerfile
+ Modelfile generated by "ollama show"
+# To build a new Modelfile based on this, replace FROM with:
+# FROM qwen2.5-coder:1.5b
 
-We might look at the actual `POST`s later. But if you think that's a doozy, consider the `init` log ....
+FROM /Users/corndog/.ollama/models/blobs/sha256-29d8c98fa6b098e200069bfb88b9508dc3e85586d20cba59f8dda9a808165104
+TEMPLATE """{{- if .Suffix }}<|fim_prefix|>{{ .Prompt }}<|fim_suffix|>{{ .Suffix }}<|fim_middle|>
+{{- else if .Messages }}
+{{- if or .System .Tools }}<|im_start|>system
+{{- if .System }}
+{{ .System }}
+{{- end }}
+{{- if .Tools }}
+
+# Tools
+
+You may call one or more functions to assist with the user query.
+
+You are provided with function signatures within <tools></tools>:
+<tools>
+{{- range .Tools }}
+{"type": "function", "function": {{ .Function }}}
+{{- end }}
+</tools>
+
+For each function call, return a json object with function name and arguments within <tool_call></tool_call> with NO other text. Do not include any backticks or ```json.
+<tool_call>
+{"name": <function-name>, "arguments": <args-json-object>}
+</tool_call>
+{{- end }}<|im_end|>
+{{ end }}
+
+{{- range $i, $_ := .Messages }}
+{{- $last := eq (len (slice $.Messages $i)) 1 -}}
+{{- if eq .Role "user" }}<|im_start|>user
+{{ .Content }}<|im_end|>
+{{ else if eq .Role "assistant" }}<|im_start|>assistant
+{{ if .Content }}{{ .Content }}
+{{- else if .ToolCalls }}<tool_call>
+{{ range .ToolCalls }}{"name": "{{ .Function.Name }}", "arguments": {{ .Function.Arguments }}}
+{{ end }}</tool_call>
+{{- end }}{{ if not $last }}<|im_end|>
+{{ end }}
+{{- else if eq .Role "tool" }}<|im_start|>user
+<tool_response>
+{{ .Content }}
+</tool_response><|im_end|>
+{{ end }}
+{{- if and (ne .Role "assistant") $last }}<|im_start|>assistant
+{{ end }}
+{{- end }}
+{{- else }}
+{{- if .System }}<|im_start|>system
+{{ .System }}<|im_end|>
+{{ end }}{{ if .Prompt }}<|im_start|>user
+{{ .Prompt }}<|im_end|>
+{{ end }}<|im_start|>assistant
+{{ end }}{{ .Response }}{{ if .Response }}<|im_end|>{{ end }}"""
+SYSTEM You are Qwen, created by Alibaba Cloud. You are a helpful assistant.
+```
+
+
+But if you think that's a doozy, consider the `init` log ....
 
 ``` log
 time=2026-10-04T10:44:07.135-04:00 level=INFO source=server.go:100 msg="using llama-server for model" model=/Users/corndog/.ollama/models/blobs/sha256-29d8c98fa6b098e200069bfb88b9508dc3e85586d20cba59f8dda9a808165104
@@ -304,4 +440,5 @@ Lots of fun to be had here.  I'll dig into these soon.
 
 *series* W1
 *uses*  `Ollama, Qwen2.5-Coder:1.5b`
+*tutor* `Sonnet5.5-Medium`
 *on* `2020 M1 Macbook Air 16GB RAM`
