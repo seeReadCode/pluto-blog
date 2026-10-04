@@ -26,7 +26,7 @@ be happy to help.
 ```
 
 
-**Let's look at the logs** –  here's what the `ollama serve` binary logged on `POST /api/generate` for my quote of Shelley's 1818 "Ozymandias".
+**Let's look at the logs** –  here's what the `ollama serve` binary logged on `POST /api/generate` for my quote of Shelley's 1818 "Ozymandias" ([wiki](https://en.wikipedia.org/wiki/Ozymandias)) .
 
 ```log
 [GIN] 2026/10/04 - 10:44:08 | 200 |  1.041500125s |       127.0.0.1 | POST     "/api/generate"
@@ -56,11 +56,9 @@ srv  update_slots: all slots are idle
 [GIN] 2026/10/04 - 10:47:53 | 200 |  1.282435416s |       127.0.0.1 | POST     "/api/chat"
 ```
 
-We can look at the `POST` later.
+We can look at the actual `POST`s later.
 
-## `init`
-
-Here's an `init` log ....
+But if that's a doozy, consider the `init` log ....
 
 ``` log
 time=2026-10-04T10:44:07.135-04:00 level=INFO source=server.go:100 msg="using llama-server for model" model=/Users/corndog/.ollama/models/blobs/sha256-29d8c98fa6b098e200069bfb88b9508dc3e85586d20cba59f8dda9a808165104
