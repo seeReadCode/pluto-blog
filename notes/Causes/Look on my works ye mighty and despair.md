@@ -3,8 +3,11 @@ published_at: "20261004"
 ---
 *date* 20261004-40Su-277
 *from* [Four lines to talk to a local LLM on old Mac Silicon](Four%20lines%20to%20talk%20to%20a%20local%20LLM%20on%20old%20Mac%20Silicon.md)
+*excerpt* The lone and level logs stretch far away
 
 *caveat*  You will want a big/second screen if you try this at home.
+
+So run the ollama server with our qwen model... 
 
 ```sh
 ollama serve
@@ -12,7 +15,7 @@ ollama serve
 ollama run qwen2.5-coder:1.5b
 ```
 
-*"So – I tells Qwen..."*
+And then tell Qwen something...
 
 ```ollama
 >>> Look on my works ye mighty and despair.
@@ -294,6 +297,12 @@ time=2026-10-04T10:44:08.145-04:00 level=INFO source=llama_server.go:1307 msg="w
 time=2026-10-04T10:44:08.146-04:00 level=INFO source=llama_server.go:1374 msg="llama-server started in 1.01 seconds"
 ```
 
-Lots of fun to be had here.
+Lots of fun to be had here.  I'll dig into these tomorrow.
 
 *series* W1
+
+*next* [Look on my works ye mighty and despair](Look%20on%20my%20works%20ye%20mighty%20and%20despair.md)
+*series* W1
+*uses*  `Ollama, Qwen2.5-Coder:1.5b`
+*on* `2020 M1 Macbook Air 16GB RAM`
+*assistance* `Gemini`
