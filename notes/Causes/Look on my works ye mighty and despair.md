@@ -300,9 +300,5 @@ time=2026-10-04T10:44:08.146-04:00 level=INFO source=llama_server.go:1374 msg="l
 Lots of fun to be had here.  I'll dig into these tomorrow.
 
 *series* W1
-
-*next* [Look on my works ye mighty and despair](Look%20on%20my%20works%20ye%20mighty%20and%20despair.md)
-*series* W1
 *uses*  `Ollama, Qwen2.5-Coder:1.5b`
 *on* `2020 M1 Macbook Air 16GB RAM`
-*assistance* `Gemini`
