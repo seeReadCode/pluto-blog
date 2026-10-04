@@ -7,7 +7,7 @@ published_at: "20261004"
 
 *caveat*  You will want a big/second screen if you try this at home.
 
-So run the ollama server with our qwen model... 
+Run our Ollama server with our Qwen model... 
 
 ```sh
 ollama serve
@@ -15,7 +15,7 @@ ollama serve
 ollama run qwen2.5-coder:1.5b
 ```
 
-And then tell Qwen something...
+And tell Qwen something...
 
 ```ollama
 >>> Look on my works ye mighty and despair.
@@ -28,7 +28,9 @@ looking for guidance or someone to talk to, I'd
 be happy to help.
 ```
 
-**Let's look at the logs** –  here's what the `ollama serve` binary logged on `POST /api/generate` for my quote of Shelley's 1818 "Ozymandias" ([wiki](https://en.wikipedia.org/wiki/Ozymandias)) .
+Well that did you expect a coder bot to say?
+
+**Let's look at the logs** –  here's what the `ollama serve` binary logged after the `POST /api/generate` of my quote of Shelley's 1818 "Ozymandias" ([wiki](https://en.wikipedia.org/wiki/Ozymandias)) .
 
 ```log
 [GIN] 2026/10/04 - 10:44:08 | 200 |  1.041500125s |       127.0.0.1 | POST     "/api/generate"
@@ -57,6 +59,10 @@ slot      release: id  0 | task 0 | stop processing: n_tokens = 89, truncated = 
 srv  update_slots: all slots are idle
 [GIN] 2026/10/04 - 10:47:53 | 200 |  1.282435416s |       127.0.0.1 | POST     "/api/chat"
 ```
+
+I take that into Claude to explain it to me.
+
+
 
 We might look at the actual `POST`s later. But if you think that's a doozy, consider the `init` log ....
 
