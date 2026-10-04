@@ -2,7 +2,10 @@
   "name": "notes",
   "private": true,
   "type": "module",
-  "scripts": { "build": "node build.mjs" },
+  "scripts": {
+    "build": "node build.mjs",
+    "preview": "node build.mjs && node serve.mjs"
+  },
   "dependencies": {
     "markdown-it": "^14.1.0",
     "markdown-it-footnote": "^4.0.0",
