@@ -2,7 +2,7 @@
 published_at: "20261004"
 ---
 *date* 20261004-40Su-277
-*from* [Four lines to talk with Qwen2.5 on a 2020 Macbook Air with 16GB RAM](Four%20lines%20to%20talk%20with%20Qwen2.5%20on%20a%202020%20Macbook%20Air%20with%2016GB%20RAM.md)
+*from* [Four lines to talk to a local LLM on old Mac Silicon](Four%20lines%20to%20talk%20to%20a%20local%20LLM%20on%20old%20Mac%20Silicon.md)
 
 *caveat*  You will want a big/second screen if you try this at home.
 
