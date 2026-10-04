@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Four lines to talk to a local LLM on old Mac Silicon</title>
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body>
+<main>
+<h1>Four lines to talk to a local LLM on old Mac Silicon</h1>
+<p><em>date</em> 20261004-40Su-277<br>
+<em>excerpt</em> Talk with Qwen2.5 on a 2020 Macbook Air (16GB RAM)</p>
+<p>These four lines <em>finally</em> made me curious again about LLM-adjacent development.  I know other people have been on this for months now but I bet many more might appreciate this beacon of light as sail the seas of slop.</p>
+<pre><code class="hljs language-sh">brew install ollama <span class="hljs-comment"># llama.cpp wrapper + docker for models in Go</span>
+ollama serve <span class="hljs-comment"># watch the log!</span>
+
+<span class="hljs-comment"># open a new terminal screen</span>
+ollama pull qwen2.5-coder:1.5b  <span class="hljs-comment"># install Alibaba&#x27;s model – 1GB </span>
+ollama run qwen2.5-coder:1.5b <span class="hljs-comment"># run it – 5GB ram</span>
+</code></pre>
+<p>Now we can watch <em>both</em> sides of the chatbot conversation.</p>
+<p>This should not route any of our precious model interaction to the magnanimous tech overlords.  But please beware rot and default opt-ins.</p>
+<h2 id="what-are-these-things">What are these things</h2>
+<ul>
+<li><strong>homebrew</strong> - <em>the</em> package manager for Mac OS (<a href="https://brew.sh/">brew.sh</a>)</li>
+<li><strong>Qwen2.5</strong> – Allibaba’s LLM model that is “excellent for autocomplete and light agent tasks” (<a href="https://qwen.ai/blog?id=qwen2.5">qwen.com</a>) (<a href="https://ollama.com/library/qwen2.5-coder:7b">hf/qwen2.5-coder:1.5b</a>) (<a href="https://en.wikipedia.org/wiki/Qwen">wiki</a>) (<a href="https://huggingface.co/collections/Qwen/qwen25">hf/qwen 2.5 models</a>)</li>
+<li><strong>Ollama</strong> – “Docker for LLM models” written in Go. Widely used app for managing models with <a href="https://github.com/opencontainers">open containers standards</a>. Defaults to their registry. Runs LLM models <em>locally</em> with <a href="https://github.com/ggml-org/ggml/blob/master/docs/gguf.md">GGUF</a> and the <a href="https://github.com/ggml-org/llama.cpp">llama.cpp</a> backend.</li>
+</ul>
+<p>Ollama lacks metrics out of the box <em>and</em> is not specialized for Mac Silicon. So, consider   <a href="https://omlx.ai/">oMLX</a> and <a href="https://github.com/ml-explore/mlx-lm">mlx-lm</a> for using Mac Silicon’s <a href="https://opensource.apple.com/projects/mlx/">MLX</a>.  For a GUI and image based workflows look at <a href="https://lmstudio.ai/">LM Studio</a>.  For local VSCode integration, consider <a href="https://cline.bot/">Cline</a>.</p>
+<p>Anyways – have fun!</p>
+<p><em>next</em> <a href="../../Causes/Look%20on%20my%20works%20ye%20mighty%20and%20despair/">Look on my works ye mighty and despair</a><br>
+<em>series</em> W1</p>
+<p><em>uses</em>  <code>homebrew, Ollama, Qwen2.5-Coder:1.5b</code><br>
+<em>on</em> <code>2020 M1 Macbook Air 16GB RAM</code><br>
+<em>assistance</em> <code>Gemini</code></p>
+
+</main>
+</body>
+</html>
