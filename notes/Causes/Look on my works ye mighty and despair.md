@@ -28,7 +28,6 @@ looking for guidance or someone to talk to, I'd
 be happy to help.
 ```
 
-
 **Let's look at the logs** –  here's what the `ollama serve` binary logged on `POST /api/generate` for my quote of Shelley's 1818 "Ozymandias" ([wiki](https://en.wikipedia.org/wiki/Ozymandias)) .
 
 ```log
@@ -59,9 +58,7 @@ srv  update_slots: all slots are idle
 [GIN] 2026/10/04 - 10:47:53 | 200 |  1.282435416s |       127.0.0.1 | POST     "/api/chat"
 ```
 
-We can look at the actual `POST`s later.
-
-But if that's a doozy, consider the `init` log ....
+We might look at the actual `POST`s later. But if you think that's a doozy, consider the `init` log ....
 
 ``` log
 time=2026-10-04T10:44:07.135-04:00 level=INFO source=server.go:100 msg="using llama-server for model" model=/Users/corndog/.ollama/models/blobs/sha256-29d8c98fa6b098e200069bfb88b9508dc3e85586d20cba59f8dda9a808165104
@@ -297,7 +294,7 @@ time=2026-10-04T10:44:08.145-04:00 level=INFO source=llama_server.go:1307 msg="w
 time=2026-10-04T10:44:08.146-04:00 level=INFO source=llama_server.go:1374 msg="llama-server started in 1.01 seconds"
 ```
 
-Lots of fun to be had here.  I'll dig into these tomorrow.
+Lots of fun to be had here.  I'll dig into these soon.
 
 *series* W1
 *uses*  `Ollama, Qwen2.5-Coder:1.5b`
