@@ -4,8 +4,9 @@ published_at: "20261004"
 *date* 20261004-40Su-277
 *from* [Four lines to talk to a local LLM on old Mac Silicon](Four%20lines%20to%20talk%20to%20a%20local%20LLM%20on%20old%20Mac%20Silicon.md)
 *excerpt* The lone and level logs stretch far away
+*caveat*  You may want a big/second screen if you try this at home.
 
-*caveat*  You will want a big/second screen if you try this at home.
+---
 
 Run our Ollama server with our Qwen model... 
 
@@ -28,9 +29,9 @@ looking for guidance or someone to talk to, I'd
 be happy to help.
 ```
 
-Well that did you expect a coder bot to say?
+Well, what did you expect a coder bot to say?
 
-**Let's look at the logs** –  here's what the `ollama serve` binary logged after the `POST /api/generate` of my quote of Shelley's 1818 "Ozymandias" ([wiki](https://en.wikipedia.org/wiki/Ozymandias)) .
+**Let's look at the logs**. Here's what the `ollama serve` binary logged after the `POST /api/generate` of my quote of Shelley's 1818 "Ozymandias" ([wiki](https://en.wikipedia.org/wiki/Ozymandias)) .
 
 ```log
 [GIN] 2026/10/04 - 10:44:08 | 200 |  1.041500125s |       127.0.0.1 | POST     "/api/generate"
@@ -98,45 +99,49 @@ And here's a nice table for the parameters in play.
 |`top_n_sigma`|-1|Disabled.|
 |`mirostat`|0|Disabled. The adaptive perplexity-targeting alternative to top-k/top-p.|
 |`dist`|final step|Randomly draws from the remaining distribution.|
+> 
+> ### Timing
+> 
+> - **prompt eval**: 37 tokens in 263 ms (140 tokens/s). This is the "prefill" stage, which is parallel and fast.
+> - **eval**: 53 tokens generated in 1008 ms (51.6 tokens/s). This is the decode stage, one token at a time, and it's the speed you feel.
+> - **total**: 1272 ms for 90 tokens.
+> - **graphs reused = 52**: the compute graph was built once and reused for the other 52 decode steps, which saves overhead.
+> - **release, n_tokens = 89, truncated = 0**: the slot holds 89 tokens in its KV cache (the last sampled token isn't stored yet), and nothing was cut off by the context limit. Then all slots go idle.
+> 
+> ## How configuration changes would affect output
+> 
+> **Output style and quality** (set per request in `options`, or in a Modelfile with `PARAMETER`):
+> 
+> - **temperature**: lowering to 0–0.3 gives focused, repeatable answers, which suits code, extraction, and factual tasks. Raising to 1.0+ gives more creative but less reliable output.
+> - **top_k / top_p / min_p**: tightening them (e.g. top_p 0.7, top_k 20) trims unlikely tokens and makes output safer and blander. Loosening them increases variety and the chance of oddities. `min_p` around 0.05 is a popular alternative that adapts to the model's confidence.
+> - **repeat_penalty** (1.05–1.2): reduces looping and repeated phrases, but too high makes the model avoid necessary repeats such as names and code identifiers.
+> - **presence/frequency penalties**: nudge toward new topics or vocabulary.
+> - **seed** (with low temperature): makes results reproducible.
+> - **mirostat 1 or 2**: replaces top-k/top-p with feedback control. It keeps output "interestingness" steady, which helps in long creative text.
+> - **num_predict**: caps output length. Too low truncates answers mid-sentence.
+> - **stop**: custom stop sequences end generation early.
+> 
+> **Context and memory:**
+> 
+> - **num_ctx** (here 4096): raising it lets you send longer prompts or conversations, but KV cache memory grows linearly with it. Too large can push layers off the GPU and slow everything down. Too small silently drops old conversation content, so the model "forgets" earlier turns (the `truncated` flag would show it).
+> - **num_keep**: protects the first N tokens (like a system prompt) from being discarded when the context shifts.
+> - **OLLAMA_KV_CACHE_TYPE** (`q8_0`/`q4_0`) with **OLLAMA_FLASH_ATTENTION=1**: shrinks KV cache memory, allowing larger contexts, with a small quality cost.
+> 
+> **Speed and resources:**
+> 
+> - **num_gpu** (layers offloaded): more layers on GPU means faster decode. Your 51 tokens/s suggests it is probably well offloaded already.
+> - **num_thread**: only matters for CPU inference. Setting it to your physical core count is usually best.
+> - **num_batch**: larger batches speed up prompt processing, with more memory use.
+> - **OLLAMA_NUM_PARALLEL**: more slots allow concurrent requests, but the context is divided among them (4 slots at 8192 context gives 2048 each), and per-request speed may drop.
+> - **OLLAMA_KEEP_ALIVE**: how long the model stays loaded. Keeping it loaded avoids reload delay on the next request. A shorter value frees VRAM sooner.
+> - **Prompt cache hits**: when consecutive requests share a long prefix (like a system prompt), prompt eval time drops sharply. That's most noticeable with long prompts. With your 37-token prompt it hardly matters.
+> 
+> Some of the newer samplers (DRY, XTC, top-n-sigma) may not be exposed as settings in all Ollama versions, so check your version's docs before relying on them. If you share your Modelfile or environment variables, I can suggest specific values for your use case.
 
-### Timing
 
-- **prompt eval**: 37 tokens in 263 ms (140 tokens/s). This is the "prefill" stage, which is parallel and fast.
-- **eval**: 53 tokens generated in 1008 ms (51.6 tokens/s). This is the decode stage, one token at a time, and it's the speed you feel.
-- **total**: 1272 ms for 90 tokens.
-- **graphs reused = 52**: the compute graph was built once and reused for the other 52 decode steps, which saves overhead.
-- **release, n_tokens = 89, truncated = 0**: the slot holds 89 tokens in its KV cache (the last sampled token isn't stored yet), and nothing was cut off by the context limit. Then all slots go idle.
-
-## How configuration changes would affect output
-
-**Output style and quality** (set per request in `options`, or in a Modelfile with `PARAMETER`):
-
-- **temperature**: lowering to 0–0.3 gives focused, repeatable answers, which suits code, extraction, and factual tasks. Raising to 1.0+ gives more creative but less reliable output.
-- **top_k / top_p / min_p**: tightening them (e.g. top_p 0.7, top_k 20) trims unlikely tokens and makes output safer and blander. Loosening them increases variety and the chance of oddities. `min_p` around 0.05 is a popular alternative that adapts to the model's confidence.
-- **repeat_penalty** (1.05–1.2): reduces looping and repeated phrases, but too high makes the model avoid necessary repeats such as names and code identifiers.
-- **presence/frequency penalties**: nudge toward new topics or vocabulary.
-- **seed** (with low temperature): makes results reproducible.
-- **mirostat 1 or 2**: replaces top-k/top-p with feedback control. It keeps output "interestingness" steady, which helps in long creative text.
-- **num_predict**: caps output length. Too low truncates answers mid-sentence.
-- **stop**: custom stop sequences end generation early.
-
-**Context and memory:**
-
-- **num_ctx** (here 4096): raising it lets you send longer prompts or conversations, but KV cache memory grows linearly with it. Too large can push layers off the GPU and slow everything down. Too small silently drops old conversation content, so the model "forgets" earlier turns (the `truncated` flag would show it).
-- **num_keep**: protects the first N tokens (like a system prompt) from being discarded when the context shifts.
-- **OLLAMA_KV_CACHE_TYPE** (`q8_0`/`q4_0`) with **OLLAMA_FLASH_ATTENTION=1**: shrinks KV cache memory, allowing larger contexts, with a small quality cost.
-
-**Speed and resources:**
-
-- **num_gpu** (layers offloaded): more layers on GPU means faster decode. Your 51 tokens/s suggests it is probably well offloaded already.
-- **num_thread**: only matters for CPU inference. Setting it to your physical core count is usually best.
-- **num_batch**: larger batches speed up prompt processing, with more memory use.
-- **OLLAMA_NUM_PARALLEL**: more slots allow concurrent requests, but the context is divided among them (4 slots at 8192 context gives 2048 each), and per-request speed may drop.
-- **OLLAMA_KEEP_ALIVE**: how long the model stays loaded. Keeping it loaded avoids reload delay on the next request. A shorter value frees VRAM sooner.
-- **Prompt cache hits**: when consecutive requests share a long prefix (like a system prompt), prompt eval time drops sharply. That's most noticeable with long prompts. With your 37-token prompt it hardly matters.
-
-Some of the newer samplers (DRY, XTC, top-n-sigma) may not be exposed as settings in all Ollama versions, so check your version's docs before relying on them. If you share your Modelfile or environment variables, I can suggest specific values for your use case.
-
+```sh
+ollama show --modelfile qwen2.5-coder:1.5b
+```
 
 ```dockerfile
  Modelfile generated by "ollama show"
@@ -198,7 +203,6 @@ For each function call, return a json object with function name and arguments wi
 {{ end }}{{ .Response }}{{ if .Response }}<|im_end|>{{ end }}"""
 SYSTEM You are Qwen, created by Alibaba Cloud. You are a helpful assistant.
 ```
-
 
 But if you think that's a doozy, consider the `init` log ....
 
