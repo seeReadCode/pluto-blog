@@ -61,7 +61,7 @@ srv  update_slots: all slots are idle
 [GIN] 2026/10/04 - 10:47:53 | 200 |  1.282435416s |       127.0.0.1 | POST     "/api/chat"
 ```
 
-I send that to Claude to explain it to me.
+Here's how Claude's Sonnet 5.5 explained it to me.
 
 > ### Server and slot setup
 > 
@@ -83,7 +83,7 @@ I send that to Claude to explain it to me.
 > Each generated token passes through these filters in order: `logits -> penalties -> dry -> top-n-sigma -> top-k -> typical -> top-p -> min-p -> xtc -> temp -> dist`. The `?` marks samplers that are optional and inactive with the current values (neutral settings).
 > 
 
-And here's a nice table for the parameters in play.
+With a nice table to explain some of the key params:
 
 |Parameter|Value|Meaning|
 |---|---|---|
@@ -138,7 +138,7 @@ And here's a nice table for the parameters in play.
 > 
 > Some of the newer samplers (DRY, XTC, top-n-sigma) may not be exposed as settings in all Ollama versions, so check your version's docs before relying on them. If you share your Modelfile or environment variables, I can suggest specific values for your use case.
 
-So next let's look at the the `modelfile`.
+Next let's look at the the `modelfile`.
 
 ---
 
