@@ -138,12 +138,15 @@ And here's a nice table for the parameters in play.
 > 
 > Some of the newer samplers (DRY, XTC, top-n-sigma) may not be exposed as settings in all Ollama versions, so check your version's docs before relying on them. If you share your Modelfile or environment variables, I can suggest specific values for your use case.
 
-So tomorrow let's look at the the `modelfile`.
+So next let's look at the the `modelfile`.
 
+---
 
-Lots of fun to be had here.  I'll dig into these soon.
-
+*next* She's a Model and She's Looking Good
 *series* W1
+
+---
+
 *uses*  `Ollama, Qwen2.5-Coder:1.5b`
 *tutor* `Sonnet5.5-Medium`
 *on* `2020 M1 Macbook Air 16GB RAM`

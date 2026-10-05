@@ -29,8 +29,12 @@ Ollama lacks metrics out of the box *and* is not specialized for Mac Silicon. So
 
 Anyways – have fun!
 
+---
+
 *next* [Look on my works ye mighty and despair](Look%20on%20my%20works%20ye%20mighty%20and%20despair.md)
 *series* W1
+
+---
 
 *uses*  `homebrew, Ollama, Qwen2.5-Coder:1.5b`
 *on* `2020 M1 Macbook Air 16GB RAM`
