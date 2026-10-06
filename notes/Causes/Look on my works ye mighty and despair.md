@@ -2,7 +2,7 @@
 published_at: "20261004"
 ---
 *date* 20261004-40Su-277
-*from* [Four lines to talk to a local LLM on old Mac Silicon](Four%20lines%20to%20talk%20to%20a%20local%20LLM%20on%20old%20Mac%20Silicon.md)
+*from* [Start a local LLM on an old Mac Silicon now in four lines](Start%20a%20local%20LLM%20on%20an%20old%20Mac%20Silicon%20now%20in%20four%20lines.md)
 *excerpt* The lone and level logs stretch far away
 *caveat*  You may want a big/second screen if you try this at home.
 
@@ -29,9 +29,10 @@ looking for guidance or someone to talk to, I'd
 be happy to help.
 ```
 
-Well, what did you expect a coder bot to say?
+Well – what did you expect from a coder bot?
 
-**Let's look at the logs**. Here's what the `ollama serve` binary logged after the `POST /api/generate` of my quote of Shelley's 1818 "Ozymandias" ([wiki](https://en.wikipedia.org/wiki/Ozymandias)) .
+**Let's look at the logs**. 
+Here's what the `ollama serve` binary logged as it responded to my `POST /api/generate` courtesy of Shelley's 1818 "Ozymandias" ([wiki](https://en.wikipedia.org/wiki/Ozymandias)) .
 
 ```log
 [GIN] 2026/10/04 - 10:44:08 | 200 |  1.041500125s |       127.0.0.1 | POST     "/api/generate"
@@ -61,7 +62,7 @@ srv  update_slots: all slots are idle
 [GIN] 2026/10/04 - 10:47:53 | 200 |  1.282435416s |       127.0.0.1 | POST     "/api/chat"
 ```
 
-Here's how Claude's Sonnet 5.5 explained it to me.
+A more sage LLM – Claude's Sonnet 5.5 on Medium  – can help us decipher all of that.
 
 > ### Server and slot setup
 > 
@@ -82,23 +83,6 @@ Here's how Claude's Sonnet 5.5 explained it to me.
 > 
 > Each generated token passes through these filters in order: `logits -> penalties -> dry -> top-n-sigma -> top-k -> typical -> top-p -> min-p -> xtc -> temp -> dist`. The `?` marks samplers that are optional and inactive with the current values (neutral settings).
 > 
-
-With a nice table to explain some of the key params:
-
-|Parameter|Value|Meaning|
-|---|---|---|
-|`temp`|0.8|Randomness. Lower is more deterministic, higher is more varied.|
-|`top_k`|40|Only the 40 most likely tokens are candidates.|
-|`top_p`|0.9|Keep the smallest set of tokens whose probabilities sum to 90%.|
-|`min_p`|0|Disabled. Otherwise drops tokens below a fraction of the top token's probability.|
-|`typical_p`|1.0|Disabled.|
-|`repeat_penalty` / `repeat_last_n`|1.0 / 64|No penalty. If raised, it would apply to the last 64 tokens.|
-|`frequency_penalty`, `presence_penalty`|0|Disabled. They penalize tokens by how often or whether they've already appeared.|
-|`dry_*`|multiplier 0|DRY ("Don't Repeat Yourself") penalizes repeated sequences. Off because the multiplier is 0.|
-|`xtc_*`|probability 0|"Exclude Top Choices" occasionally removes the most likely tokens to boost creativity. Off.|
-|`top_n_sigma`|-1|Disabled.|
-|`mirostat`|0|Disabled. The adaptive perplexity-targeting alternative to top-k/top-p.|
-|`dist`|final step|Randomly draws from the remaining distribution.|
 > 
 > ### Timing
 > 
@@ -138,7 +122,22 @@ With a nice table to explain some of the key params:
 > 
 > Some of the newer samplers (DRY, XTC, top-n-sigma) may not be exposed as settings in all Ollama versions, so check your version's docs before relying on them. If you share your Modelfile or environment variables, I can suggest specific values for your use case.
 
-Next let's look at the the `modelfile`.
+| Parameter                               | Value         | Meaning                                                                                      |
+| --------------------------------------- | ------------- | -------------------------------------------------------------------------------------------- |
+| `temp`                                  | 0.8           | Randomness. Lower is more deterministic, higher is more varied.                              |
+| `top_k`                                 | 40            | Only the 40 most likely tokens are candidates.                                               |
+| `top_p`                                 | 0.9           | Keep the smallest set of tokens whose probabilities sum to 90%.                              |
+| `min_p`                                 | 0             | Disabled. Otherwise drops tokens below a fraction of the top token's probability.            |
+| `typical_p`                             | 1.0           | Disabled.                                                                                    |
+| `repeat_penalty` / `repeat_last_n`      | 1.0 / 64      | No penalty. If raised, it would apply to the last 64 tokens.                                 |
+| `frequency_penalty`, `presence_penalty` | 0             | Disabled. They penalize tokens by how often or whether they've already appeared.             |
+| `dry_*`                                 | multiplier 0  | DRY ("Don't Repeat Yourself") penalizes repeated sequences. Off because the multiplier is 0. |
+| `xtc_*`                                 | probability 0 | "Exclude Top Choices" occasionally removes the most likely tokens to boost creativity. Off.  |
+| `top_n_sigma`                           | -1            | Disabled.                                                                                    |
+| `mirostat`                              | 0             | Disabled. The adaptive perplexity-targeting alternative to top-k/top-p.                      |
+| `dist`                                  | final step    | Randomly draws from the remaining distribution.                                              |
+
+That's a bit more than I want to chew on for now. So let's look at the the `modelfile` next.
 
 ---
 
@@ -148,5 +147,5 @@ Next let's look at the the `modelfile`.
 ---
 
 *uses*  `Ollama, Qwen2.5-Coder:1.5b`
-*tutor* `Sonnet5.5-Medium`
+*research* `Sonnet5.5-Medium`
 *on* `2020 M1 Macbook Air 16GB RAM`
