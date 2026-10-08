@@ -141,7 +141,7 @@ That's a bit more than I want to chew on for now. So let's look at the the `mode
 
 ---
 
-*next* She's a Model and She's Looking Good
+*next* [She's a Model and She's Looking Good](She%27s%20a%20Model%20and%20She%27s%20Looking%20Good.md)
 *series* W1
 
 ---
