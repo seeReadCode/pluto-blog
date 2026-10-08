@@ -44,7 +44,7 @@ console.log(`Source: ${SRC}  (${mdFiles.length} markdown files found)`);
 
 // ---- pass 1: read every note, decide what is published ----------------------
 const slugOf = (rel) => {
-  const s = rel.replace(/\.md$/i, "");
+  const s = rel.replace(/\.md$/i, "").replace(/ /g, "-");
   return path.posix.basename(s).toLowerCase() === "index" ? parentOf(s) : s; // folder/index.md -> folder
 };
 const notes = [];
@@ -58,7 +58,7 @@ for (const f of mdFiles) {
     slug: slugOf(rel),
     isIndex: path.posix.basename(rel).toLowerCase() === "index.md",
     title: data.title ?? path.posix.basename(rel).replace(/\.md$/i, ""),
-    date: data.date ? fmtDate(data.date) : "",
+    date: data.published_at ? fmtDate(data.published_at): "",
   });
 }
 
