@@ -260,19 +260,19 @@ Again we have a `.System` render for after `<|im_start|>system` if `.System`or `
 
  5 
 
-Unfortunately, `Qwen2.5`does not really comply with this tool formatting – more on that later.
+Unfortunately, Qwen2.5 does not really comply with this tool formatting – more on that later.
 
-After that we see the messages themselves branched by the `.Role`values of `"user"`, `"assistant"` and `"tool"`. If we have a value for the last message and it's not from the assistant, that means its time to start `<|im_start|>assistant`.
+After that we see the messages themselves branched by the `.Role` values of `"user"`, `"assistant"` and `"tool"`. If we have a value for the last message and it's not from the assistant, that means its time to start `<|im_start|>assistant`.
 
  6 
 
-Which brings finally to the `.Response`footer.
+Which brings us finally to the `.Response` footer.
 
 ## `.Response`
 
  7 
 
-Note there's no conditional on `.Response`itself.  As Gemini explains "`.Response` is the Target, Not an Input". 
+Note there's no conditional on `.Response`itself.  As Gemini explains "`.Response` is the Target, Not an Input":
 
 > This acts as a **historical text-renderer** during chat loops.
 > 
@@ -280,10 +280,10 @@ Note there's no conditional on `.Response`itself.  As Gemini explains "`.Respons
 > - However, when Ollama evaluates this template to re-compile history for a _subsequent_ turn, `.Response` holds the text the model generated last time. It outputs that text, and the `{{ if .Response }}` conditional appends the closing `<|im_end|>` token so that old assistant turns are cleanly sealed off before the next user prompt begins.
 
 
----
+Alright that's enough about model files for one session. Most of this tech, including tools, is from 2023 but the Qwen model I am using wasn't released until September 2024.  To be frank, I am embarrassed that it took me so long to dig into this but here we are.
 
-
-Alright that's enough about model files. Most of this tech, including tools, is from 2023 but the Qwen model I am using wasn't released until September 2024.  To be frank, I am embarrassed that it took me so long to dig into this but here we are.
+So again read up on the modelfile reference below from ollama. consider the `Go` and Docker systems:
+ - [docs.ollama.com/modelfile](https://docs.ollama.com/modelfile)
 
 If you want to read more about Qwen2.5-coder-1
 .5B's `modelfile`, check out these references:
@@ -303,7 +303,7 @@ Next we will learn more about tools.
 
 ---
 
-*next* [[If the AI had a hammer]]
+*next* [[If AI had a hammer]]
 *series* [[W1]]
 
 ---
