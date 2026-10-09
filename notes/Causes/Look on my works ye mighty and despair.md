@@ -1,8 +1,8 @@
 ---
-published_at: "20261004"
+published_at: "20261005"
 ---
-*date* 20261004-40Su-277
-*from* [Start a local LLM on an old Mac Silicon now in four lines](Start%20a%20local%20LLM%20on%20an%20old%20Mac%20Silicon%20now%20in%20four%20lines.md)
+*date* 20261005-41Mo-278
+*from* [Start a local LLM on a 2020 Mac Silicon in four lines](Start%20a%20local%20LLM%20on%20a%202020%20Mac%20Silicon%20in%20four%20lines.md)
 *excerpt* The lone and level logs stretch far away
 *caveat*  You may want a big/second screen if you try this at home.
 
@@ -141,7 +141,7 @@ That's a bit more than I want to chew on for now. So let's look at the the `mode
 
 ---
 
-*next* [She's a Model and She's Looking Good](She%27s%20a%20Model%20and%20She%27s%20Looking%20Good.md)
+*next* [She's a model and she's looking good](She%27s%20a%20model%20and%20she%27s%20looking%20good.md)
 *series* W1
 
 ---
