@@ -5,7 +5,7 @@ published_at: "20261008"
 *from* [She's a model and she's looking good](She%27s%20a%20model%20and%20she%27s%20looking%20good.md)
 *excerpt* Tool calling for Qwen2.5 and Gemma4 via Ollama with Python and TypeScript
 
-So tools cannot be fed into `ollama run` .  ut they can be baked into the `Modelfile`or fed in via the API.
+So tools cannot be fed into `ollama run` .  But they can be baked into the `Modelfile`or fed in via the API.
 
 ```sh
 ollama serve
@@ -175,7 +175,7 @@ Final Answer:
 The current weather in Tokyo is sunny and 72°F.
 ```
 
-Although it's quick, this python wrapper with the system prompt stuffing leaves us a little underwhelmed.  Since a later, larger model might better support tools I went ahead and tried the Gemma4-E4B model from April 2026.  Gemma4 appears to actually support tool calls and since I'd prefer a cleaner TypeScript  implementation, let's have a look at what Gemini helped cook up for us with some automatic type inference thanks to [zod](https://zod.dev/), we get this:
+Although it's quick, this python wrapper with the system prompt stuffing leaves us a little underwhelmed.  Since a later, larger model might better support tools I went ahead and tried the Gemma4-E4B model from April 2026.  Gemma4 appears to actually support tool calls and since I'd prefer a cleaner TypeScript  implementation, let's have a look at what Gemini helped cook up for us. With some automatic type inference thanks to [zod](https://zod.dev/), we get this:
 
 ```typescript
 import ollama from 'ollama';
