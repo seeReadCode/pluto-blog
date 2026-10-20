@@ -256,22 +256,97 @@ Ok, let's go back up to the `.Messages`block
 
 We are going to take this in pieces.  
 
-Again we have a `.System` render for after `<|im_start|>system` if `.System`or `.Tools`is defined and indeed after `.System`, if we have it, we see `.Tools`, if we have it, with a `<tools>` block which contains a `{"type": "function", "function": {{ .Function }}}` and instructions to format the result in `<tool_call>` with  `name`and `argument attributes.
+Again we have a `.System` render for after `<|im_start|>system` if `.System`or `.Tools`is defined and indeed after `.System`, if we have it, we see `.Tools`, if we have it, with a `<tools>` block which contains a `{"type": "function", "function": {{ .Function }}}` and instructions to format the result in `<tool_call>` with  `name`and `argument attributes.`  Here's how that looks:
 
 
- 5 
+```Go
+{{- else if .Messages }}
+	{{- if or .System .Tools }}
+		<|im_start|>system
+		
+		{{- if .System }}
+			{{ .System }}
+		{{- end }}
+		
+		{{- if .Tools }}
+			# Tools
+			You may call one or more functions to assist with the user query.
+			You are provided with function signatures within <tools></tools>:
+			<tools>
+				{{- range .Tools }}
+					{"type": "function", "function": {{ .Function }}}
+				{{- end }}
+			</tools>
+		
+			For each function call, return a json object with function name and arguments within <tool_call></tool_call> with NO other text. Do not include any backticks or [removed the backticks here for better highlighting]json.
+			<tool_call>
+				{"name": <function-name>, "arguments": <args-json-object>}
+			</tool_call>
+		{{- end }}
+		<|im_end|>
+	{{ end }}
+```
 
 Unfortunately, Qwen2.5 does not really comply with this tool formatting – more on that later.
 
-After that we see the messages themselves branched by the `.Role` values of `"user"`, `"assistant"` and `"tool"`. If we have a value for the last message and it's not from the assistant, that means its time to start `<|im_start|>assistant`.
+After that we see the messages themselves branched by the `.Role` values of `"user"`, `"assistant"` and `"tool"`. If we have a value for the last message and it's not from the assistant, that means its time to start `<|im_start|>assistant`.  Let's have a look:
 
- 6 
+```Go
+	{{- range $i, $_ := .Messages }}
+		{{- $last := eq (len (slice $.Messages $i)) 1 -}}
+	
+		{{- if eq .Role "user" }}
+
+			<|im_start|>user
+			{{ .Content }}
+			<|im_end|>
+
+		{{ else if eq .Role "assistant" }}
+
+			<|im_start|>assistant
+			{{ if .Content }}
+				{{ .Content }}
+			{{- else if .ToolCalls }}<tool_call>
+				{{ range .ToolCalls }}
+					{ "name": 
+						"{{ .Function.Name }}", 
+						"arguments": {{ .Function.Arguments }}
+					}
+				{{ end }}</tool_call>
+			{{- end }}
+			{{ if not $last }}
+				<|im_end|>
+			{{ end }}
+
+		{{- else if eq .Role "tool" }}
+
+			<|im_start|>user
+			<tool_response>
+				{{ .Content }}
+			</tool_response>
+			<|im_end|>
+
+		{{ end }}
+		
+		{{- if and (ne .Role "assistant") $last }}
+			<|im_start|>assistant
+		{{ end }}
+
+	{{- end }}
+```
 
 Which brings us finally to the `.Response` footer.
 
 ## `.Response`
 
- 7 
+So this the response section: 
+
+```Go
+.Response
+{{ if .Response }}
+	<|im_end|>
+{{ end }}
+```
 
 Note there's no conditional on `.Response`itself.  As Gemini explains "`.Response` is the Target, Not an Input":
 
@@ -304,8 +379,8 @@ Next we will learn more about tools.
 
 ---
 
-*next* [[If AI had a hammer]]
-*series* [[W1]]
+*next* [If AI had a hammer](If%20AI%20had%20a%20hammer.md)
+*series* W1
 
 ---
 
