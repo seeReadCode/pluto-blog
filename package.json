@@ -7,7 +7,7 @@
     "preview": "node build.mjs && node serve.mjs"
   },
   "dependencies": {
-    "markdown-it": "^14.1.0",
+    "markdown-it": "^14.3.3",
     "markdown-it-footnote": "^4.0.0",
     "gray-matter": "^4.0.3",
     "highlight.js": "^11.10.0"
